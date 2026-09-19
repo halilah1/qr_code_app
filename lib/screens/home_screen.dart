@@ -4,6 +4,8 @@ import '../services/api_service.dart';
 
 import 'qr_screen.dart';
 
+import 'history_screen.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -48,24 +50,41 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    final text = _textController.text.trim();
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        final text = _textController.text.trim();
 
-                    await ApiService.createCode(text);
+                        await ApiService.createCode(text);
 
-                    if (!context.mounted) return;
+                        if (!context.mounted) return;
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => QrScreen(text: text),
-                      ),
-                    );
-                  }
-                },
-                child: const Text('Generate QR'),
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => QrScreen(text: text),
+                          ),
+                        );
+                      }
+                    },
+                    child: const Text('Generate QR'),
+                  ),
+                  const SizedBox(width: 12),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HistoryScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text('View History'),
+                  ),
+                ],
               ),
             ],
           ),
