@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../services/api_service.dart';
+
 import 'qr_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -47,9 +49,13 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
                     final text = _textController.text.trim();
+
+                    await ApiService.createCode(text);
+
+                    if (!context.mounted) return;
 
                     Navigator.push(
                       context,

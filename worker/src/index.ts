@@ -15,10 +15,27 @@ export default {
 	async fetch(request, env, ctx): Promise<Response> {
 		const url = new URL(request.url);
 
-		if (request.method === 'GET' && url.pathname === '/codes') {
-			const { results } = await env.qr_code_db.prepare('SELECT id, text, created_at AS createdAt FROM qr_codes ORDER BY created_at DESC').all();
+		const corsHeaders = {
+			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+			'Access-Control-Allow-Headers': 'Content-Type',
+		};
 
-			return Response.json(results);
+		if (request.method === 'OPTIONS') {
+			return new Response(null, {
+				status: 204,
+				headers: corsHeaders,
+			});
+		}
+
+		if (request.method === 'GET' && url.pathname === '/codes') {
+			const { results } = await env.qr_code_db
+				.prepare('SELECT id, text, created_at AS createdAt FROM qr_codes ORDER BY created_at DESC')
+				.all();
+
+			return Response.json(results, {
+				headers: corsHeaders,
+			});
 		}
 
 		if (request.method === 'POST' && url.pathname === '/codes') {
@@ -39,7 +56,10 @@ export default {
 					text: text,
 					createdAt: createdAt,
 				},
-				{ status: 201 },
+				{
+					status: 201,
+					headers: corsHeaders,
+				},
 			);
 		}
 
