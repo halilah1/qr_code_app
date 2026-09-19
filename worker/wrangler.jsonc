@@ -1,6 +1,13 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "qr-code-worker",
-  "main": "src/index.ts",
-  "compatibility_date": "2026-09-19"
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "qr-code-worker",
+	"main": "src/index.ts",
+	"compatibility_date": "2026-09-19",
+	"d1_databases": [
+		{
+			"binding": "qr_code_db",
+			"database_name": "qr-code-db",
+			"database_id": "d468b173-db47-4572-a3c8-7863e784c226"
+		}
+	]
 }

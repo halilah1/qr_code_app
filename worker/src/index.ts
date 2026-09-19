@@ -12,19 +12,37 @@
  */
 
 export default {
-  async fetch(request, env, ctx): Promise<Response> {
-    const url = new URL(request.url);
+	async fetch(request, env, ctx): Promise<Response> {
+		const url = new URL(request.url);
 
-    if (request.method === "GET" && url.pathname === "/codes") {
-      return Response.json([
-        {
-          id: 1,
-          text: "Hello World",
-          createdAt: "2026-09-20T00:00:00Z",
-        },
-      ]);
-    }
+		if (request.method === 'GET' && url.pathname === '/codes') {
+			const { results } = await env.qr_code_db.prepare('SELECT id, text, created_at AS createdAt FROM qr_codes ORDER BY created_at DESC').all();
 
-    return new Response("Not Found", { status: 404 });
-  },
+			return Response.json(results);
+		}
+
+		if (request.method === 'POST' && url.pathname === '/codes') {
+			const body = await request.json<{ text?: string }>();
+
+			if (!body.text || body.text.trim() === '') {
+				return Response.json({ error: 'Text is required' }, { status: 400 });
+			}
+
+			const text = body.text.trim();
+			const createdAt = new Date().toISOString();
+
+			const result = await env.qr_code_db.prepare('INSERT INTO qr_codes (text, created_at) VALUES (?, ?)').bind(text, createdAt).run();
+
+			return Response.json(
+				{
+					id: result.meta.last_row_id,
+					text: text,
+					createdAt: createdAt,
+				},
+				{ status: 201 },
+			);
+		}
+
+		return new Response('Not Found', { status: 404 });
+	},
 } satisfies ExportedHandler<Env>;
