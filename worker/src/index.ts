@@ -33,6 +33,10 @@ export default {
 			return Response.redirect('http://localhost:5000', 302);
 		}
 
+		if (request.method === 'GET' && url.pathname === '/auth/check') {
+			return Response.json({ authenticated: true }, { headers: corsHeaders });
+		}
+
 		if (request.method === 'GET' && url.pathname === '/codes') {
 			const { results } = await env.qr_code_db
 				.prepare('SELECT id, text, created_at AS createdAt FROM qr_codes ORDER BY created_at DESC')

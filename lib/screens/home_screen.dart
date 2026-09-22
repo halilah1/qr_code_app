@@ -58,16 +58,28 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (_formKey.currentState!.validate()) {
                         final text = _textController.text.trim();
 
-                        await ApiService.createCode(text);
+                        try {
+                          await ApiService.createCode(text);
 
-                        if (!context.mounted) return;
+                          if (!context.mounted) return;
 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => QrScreen(text: text),
-                          ),
-                        );
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => QrScreen(text: text),
+                            ),
+                          );
+                        } catch (_) {
+                          if (!context.mounted) return;
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Failed to save QR code. Please try again.',
+                              ),
+                            ),
+                          );
+                        }
                       }
                     },
                     child: const Text('Generate QR'),

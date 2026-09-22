@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../services/api_service.dart';
 import 'home_screen.dart';
-
-import 'package:url_launcher/url_launcher.dart';
 
 class AuthGate extends StatefulWidget {
   const AuthGate({super.key});
@@ -24,7 +23,10 @@ class _AuthGateState extends State<AuthGate> {
   Future<void> _login() async {
     final loginUrl = Uri.parse('${ApiService.baseUrl}/login');
 
-    await launchUrl(loginUrl, webOnlyWindowName: '_self');
+    await launchUrl(
+      loginUrl,
+      webOnlyWindowName: '_self',
+    );
   }
 
   @override
@@ -34,7 +36,9 @@ class _AuthGateState extends State<AuthGate> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         }
 
