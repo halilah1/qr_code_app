@@ -2,6 +2,8 @@
 
 A Flutter web application that generates QR codes from text or URLs, authenticates users through Cloudflare Access, and persists generated codes to Cloudflare D1 through a Cloudflare Worker.
 
+The application also supports QR code history, deletion, PNG download, and light/dark themes.
+
 ## How to Run
 
 The Cloudflare Worker, D1 database, and Cloudflare Access configuration used for this assessment are already deployed.
@@ -22,19 +24,19 @@ flutter run -d chrome --web-port=5000 --dart-define=API_BASE_URL=https://qr-code
 
 ### 3. Sign in
 
-Select **Sign in with Cloudflare Access**.
+Select **Continue with Cloudflare Access**.
 
 Enter a Gmail address and authenticate using the One-Time PIN sent to the email.
 
 After authentication, the Home screen becomes accessible. Generated QR codes are persisted to D1 and can be viewed from the History screen.
 
-### Run tests
+### Run Tests
 
 ```bash
 flutter test
 ```
 
-The project includes a unit test for parsing persisted QR code data and a widget test for the QR display screen.
+The project includes a unit test that verifies persisted QR code API data is correctly parsed into the Flutter `QrCode` model.
 
 ---
 
@@ -42,7 +44,7 @@ The project includes a unit test for parsing persisted QR code data and a widget
 
 The following is only required if you want to use your own Cloudflare environment instead of the deployed assessment backend.
 
-### 1. Create a D1 database
+### 1. Create a D1 Database
 
 From the `worker` directory:
 
@@ -58,7 +60,7 @@ The Worker expects the binding name:
 qr_code_db
 ```
 
-### 2. Apply the database migration
+### 2. Apply the Database Migration
 
 The required migration is already included under `worker/migrations`.
 
@@ -107,7 +109,7 @@ flutter run -d chrome --web-port=5000 --dart-define=API_BASE_URL=https://YOUR-WO
 
 ## Decisions Made
 
-### D1 instead of R2
+### D1 Instead of R2
 
 I chose D1 because each generated QR code only needs structured data:
 
@@ -116,7 +118,7 @@ I chose D1 because each generated QR code only needs structured data:
 
 The QR image itself does not need to be stored because it can be regenerated from the saved text.
 
-R2 would be more appropriate if the application needed to persist the generated image files themselves.
+R2 would be more appropriate if the application needed to persist generated image files themselves.
 
 ### Worker API
 
@@ -124,6 +126,7 @@ The Flutter app does not communicate directly with D1. It uses a Cloudflare Work
 
 - `POST /codes` to persist a generated code
 - `GET /codes` to retrieve persisted history
+- `DELETE /codes/:id` to delete a persisted code
 - `GET /auth/check` to check the current authentication session
 - `GET /login` for the Access login flow
 
@@ -139,25 +142,32 @@ For ease of testing, the deployed assessment environment allows any `gmail.com` 
 
 In a production environment, I would restrict the Access policy to specific authorised users or an organisation-controlled domain/identity provider.
 
-### Error handling
+### Error Handling
 
 The app handles:
 
 - empty input
 - failure to save a generated code
 - failure to retrieve history
-- missing/invalid authentication state
+- failure to delete a code
+- missing or invalid authentication state
 
-The Worker also validates the submitted text before inserting it into D1.
+The Worker also validates submitted text before inserting it into D1.
+
+### Additional Features
+
+The following stretch features were implemented:
+
+- Download generated QR codes as PNG images
+- Delete persisted QR codes with a confirmation dialog
+- Light/dark theme toggle
+- Unit test for persisted QR code data parsing
 
 ---
 
 ## What I Would Do With More Time
 
-- Add `DELETE /codes/:id` to revoke/delete persisted codes.
-- Add QR image saving and sharing.
-- Add a light/dark mode toggle.
-- Add more tests for API and authentication failure cases.
+- Add QR code sharing in addition to PNG download.
+- Expand automated tests to cover API and authentication failure cases.
 - Move the frontend origin and login redirect URL into environment configuration instead of using a fixed localhost development URL.
 - Add more detailed backend logging and error responses.
-
