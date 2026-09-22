@@ -1,30 +1,39 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:qr_code_app/main.dart';
+import 'package:qr_code_app/models/qr_code.dart';
+import 'package:qr_code_app/screens/qr_screen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  test('QrCode correctly parses API response', () {
+    final json = {
+      'id': 1,
+      'text': 'https://example.com',
+      'createdAt': '2026-09-23T01:30:00.000Z',
+    };
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    final qrCode = QrCode.fromJson(json);
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    expect(qrCode.id, 1);
+    expect(qrCode.text, 'https://example.com');
+    expect(
+      qrCode.createdAt,
+      DateTime.parse('2026-09-23T01:30:00.000Z'),
+    );
+  });
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  testWidgets('QR screen displays generated content', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: QrScreen(
+          text: 'https://example.com',
+        ),
+      ),
+    );
+
+    expect(find.text('QR Code'), findsOneWidget);
+    expect(find.text('https://example.com'), findsOneWidget);
   });
 }
