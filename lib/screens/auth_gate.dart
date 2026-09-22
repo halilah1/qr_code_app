@@ -23,10 +23,7 @@ class _AuthGateState extends State<AuthGate> {
   Future<void> _login() async {
     final loginUrl = Uri.parse('${ApiService.baseUrl}/login');
 
-    await launchUrl(
-      loginUrl,
-      webOnlyWindowName: '_self',
-    );
+    await launchUrl(loginUrl, webOnlyWindowName: '_self');
   }
 
   @override
@@ -36,9 +33,7 @@ class _AuthGateState extends State<AuthGate> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -48,16 +43,54 @@ class _AuthGateState extends State<AuthGate> {
 
         return Scaffold(
           body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text('Authentication required'),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: _login,
-                  child: const Text('Sign in with Cloudflare Access'),
+            child: Padding(
+              padding: const EdgeInsets.all(24),
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: SizedBox(
+                    width: 360,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Text(
+                          'QR Code Generator',
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+                        const Icon(Icons.lock_outline, size: 48),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Sign in',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          'Sign in to generate QR codes and view your saved history.',
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 24),
+                        SizedBox(
+                          width: double.infinity,
+                          child: FilledButton.icon(
+                            onPressed: _login,
+                            icon: const Icon(Icons.login),
+                            label: const Text(
+                              'Continue with Cloudflare Access',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ],
+              ),
             ),
           ),
         );
