@@ -16,9 +16,10 @@ export default {
 		const url = new URL(request.url);
 
 		const corsHeaders = {
-			'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Origin': 'http://localhost:5000',
 			'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
 			'Access-Control-Allow-Headers': 'Content-Type',
+			'Access-Control-Allow-Credentials': 'true',
 		};
 
 		if (request.method === 'OPTIONS') {
