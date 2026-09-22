@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart';
+import 'screens/auth_gate.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       title: 'QR Code Generator',
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      home: AuthGate(),
     );
   }
 }
