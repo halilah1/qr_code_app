@@ -10,14 +10,11 @@ class ApiService {
     defaultValue: 'http://localhost:8787',
   );
 
-  static final BrowserClient _client = BrowserClient()
-    ..withCredentials = true;
+  static final BrowserClient _client = BrowserClient()..withCredentials = true;
 
   static Future<bool> isAuthenticated() async {
     try {
-      final response = await _client.get(
-        Uri.parse('$baseUrl/auth/check'),
-      );
+      final response = await _client.get(Uri.parse('$baseUrl/auth/check'));
 
       return response.statusCode == 200;
     } catch (_) {
@@ -38,9 +35,7 @@ class ApiService {
   }
 
   static Future<List<QrCode>> getCodes() async {
-    final response = await _client.get(
-      Uri.parse('$baseUrl/codes'),
-    );
+    final response = await _client.get(Uri.parse('$baseUrl/codes'));
 
     if (response.statusCode != 200) {
       throw Exception('Failed to fetch QR codes');
@@ -48,8 +43,14 @@ class ApiService {
 
     final data = jsonDecode(response.body);
 
-    return (data as List)
-        .map((json) => QrCode.fromJson(json))
-        .toList();
+    return (data as List).map((json) => QrCode.fromJson(json)).toList();
+  }
+
+  static Future<void> deleteCode(int id) async {
+    final response = await _client.delete(Uri.parse('$baseUrl/codes/$id'));
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete QR code');
+    }
   }
 }
