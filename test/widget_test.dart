@@ -26,9 +26,10 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: QrScreen(
           text: 'https://example.com',
+          onToggleTheme: () {},
         ),
       ),
     );

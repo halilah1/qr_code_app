@@ -1,3 +1,4 @@
+import 'dart:js_interop';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -5,14 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:web/web.dart' as web;
-import 'dart:js_interop';
 
 class QrScreen extends StatefulWidget {
   final String text;
+  final VoidCallback onToggleTheme;
 
   const QrScreen({
     super.key,
     required this.text,
+    required this.onToggleTheme,
   });
 
   @override
@@ -53,9 +55,22 @@ class _QrScreenState extends State<QrScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('QR Code'),
+        actions: [
+          IconButton(
+            onPressed: widget.onToggleTheme,
+            tooltip: isDarkMode
+                ? 'Switch to light mode'
+                : 'Switch to dark mode',
+            icon: Icon(
+              isDarkMode ? Icons.light_mode : Icons.dark_mode,
+            ),
+          ),
+        ],
       ),
       body: Center(
         child: Column(

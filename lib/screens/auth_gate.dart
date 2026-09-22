@@ -5,7 +5,12 @@ import '../services/api_service.dart';
 import 'home_screen.dart';
 
 class AuthGate extends StatefulWidget {
-  const AuthGate({super.key});
+  final VoidCallback onToggleTheme;
+
+  const AuthGate({
+    super.key,
+    required this.onToggleTheme,
+  });
 
   @override
   State<AuthGate> createState() => _AuthGateState();
@@ -23,7 +28,10 @@ class _AuthGateState extends State<AuthGate> {
   Future<void> _login() async {
     final loginUrl = Uri.parse('${ApiService.baseUrl}/login');
 
-    await launchUrl(loginUrl, webOnlyWindowName: '_self');
+    await launchUrl(
+      loginUrl,
+      webOnlyWindowName: '_self',
+    );
   }
 
   @override
@@ -33,12 +41,16 @@ class _AuthGateState extends State<AuthGate> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         }
 
         if (snapshot.data == true) {
-          return const HomeScreen();
+          return HomeScreen(
+            onToggleTheme: widget.onToggleTheme,
+          );
         }
 
         return Scaffold(
@@ -61,7 +73,10 @@ class _AuthGateState extends State<AuthGate> {
                           ),
                         ),
                         const SizedBox(height: 28),
-                        const Icon(Icons.lock_outline, size: 48),
+                        const Icon(
+                          Icons.lock_outline,
+                          size: 48,
+                        ),
                         const SizedBox(height: 20),
                         const Text(
                           'Sign in',

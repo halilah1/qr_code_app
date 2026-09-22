@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../services/api_service.dart';
-
 import 'qr_screen.dart';
-
 import 'history_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final VoidCallback onToggleTheme;
+
+  const HomeScreen({super.key, required this.onToggleTheme});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -33,8 +33,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('QR Code Generator')),
+      appBar: AppBar(
+        title: const Text('QR Code Generator'),
+        actions: [
+          IconButton(
+            onPressed: widget.onToggleTheme,
+            tooltip: isDarkMode
+                ? 'Switch to light mode'
+                : 'Switch to dark mode',
+            icon: Icon(isDarkMode ? Icons.light_mode : Icons.dark_mode),
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(24),
         child: Form(
@@ -66,7 +79,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => QrScreen(text: text),
+                              builder: (context) => QrScreen(
+                                text: text,
+                                onToggleTheme: widget.onToggleTheme,
+                              ),
                             ),
                           );
                         } catch (_) {
@@ -90,7 +106,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const HistoryScreen(),
+                          builder: (context) => HistoryScreen(
+                            onToggleTheme: widget.onToggleTheme,
+                          ),
                         ),
                       );
                     },

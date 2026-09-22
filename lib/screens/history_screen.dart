@@ -6,7 +6,12 @@ import '../services/api_service.dart';
 import 'qr_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({super.key});
+  final VoidCallback onToggleTheme;
+
+  const HistoryScreen({
+    super.key,
+    required this.onToggleTheme,
+  });
 
   @override
   State<HistoryScreen> createState() => _HistoryScreenState();
@@ -81,8 +86,23 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      appBar: AppBar(title: const Text('History')),
+      appBar: AppBar(
+        title: const Text('History'),
+        actions: [
+          IconButton(
+            onPressed: widget.onToggleTheme,
+            tooltip: isDarkMode
+                ? 'Switch to light mode'
+                : 'Switch to dark mode',
+            icon: Icon(
+              isDarkMode ? Icons.light_mode : Icons.dark_mode,
+            ),
+          ),
+        ],
+      ),
       body: FutureBuilder<List<QrCode>>(
         future: _codes,
         builder: (context, snapshot) {
@@ -125,7 +145,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => QrScreen(text: code.text),
+                      builder: (context) => QrScreen(
+                        text: code.text,
+                        onToggleTheme: widget.onToggleTheme,
+                      ),
                     ),
                   );
                 },
