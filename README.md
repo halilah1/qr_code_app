@@ -135,6 +135,10 @@ The Home screen is placed behind an authentication gate. The app checks the Clou
 
 The authenticated Access cookie is also included in API requests, rather than using Access only as a login screen.
 
+For ease of testing, the deployed assessment environment allows any `gmail.com` address to authenticate using Cloudflare One-Time PIN. This is intentionally broad so reviewers can access the app without being manually added to the Access policy.
+
+In a production environment, I would restrict the Access policy to specific authorised users or an organisation-controlled domain/identity provider.
+
 ### Error handling
 
 The app handles:
@@ -157,8 +161,3 @@ The Worker also validates the submitted text before inserting it into D1.
 - Move the frontend origin and login redirect URL into environment configuration instead of using a fixed localhost development URL.
 - Add more detailed backend logging and error responses.
 
-### Platform limitation
-
-The current authentication implementation targets Flutter Web and uses `BrowserClient` to carry the Cloudflare Access browser session.
-
-For a native Flutter application, I would implement a platform-appropriate authentication/session flow rather than relying on the browser-specific client.
